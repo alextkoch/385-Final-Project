@@ -12,7 +12,7 @@
 //    University of Illinois ECE Department                              --
 //-------------------------------------------------------------------------
 //32x32 Sprites
-//20x15 Boxes
+//20x15 Boxes - This means a 300 size array (299:0) to store the coords of boxes/tank
 //640x480 Dispaly
 
 module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY, DrawX, DrawY, 
