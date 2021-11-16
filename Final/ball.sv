@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------
 
 
-module  ball ( input Reset, frame_clk,
+module  tank ( input Reset, frame_clk,
 					input [7:0] keycode,
 	      output [9:0]  TankX, TankY);
     
