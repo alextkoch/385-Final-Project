@@ -18,7 +18,7 @@
 module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY, DrawX, DrawY, 
                        output logic [7:0]  Red, Green, Blue );
     
-    logic ball_on;
+    logic tankOne, tankTwo;
 	  
     int DistOneX, DistOneY;
     int DistTwoX, DistTwoY;
@@ -29,26 +29,40 @@ module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY
     	 assign DistTwoY = DrawY - TankTwoY;
 	  
     always_comb
-    begin:Ball_on_proc
-        if ( ( DistX*DistX + DistY*DistY) <= (Size * Size) ) 
-            ball_on = 1'b1;
+    begin
+	    if ( (TankOneX[9:5] == DrawX[9:5]) && (TankOneY[9:5] == DrawY[9:5]) ) 
+            tankOne = 1'b1;
         else 
-            ball_on = 1'b0;
+            tankOne = 1'b0;
+     end 
+	
+    always_comb
+    begin
+	    if ( (TankTwoX[9:5] == DrawX[9:5]) && (TankTwoY[9:5] == DrawY[9:5]) ) 
+            tankTwo = 1'b1;
+        else 
+            tankTwo = 1'b0;
      end 
        
     always_comb
     begin:RGB_Display
-        if ((ball_on == 1'b1)) 
+	    if ((tankOne == 1'b1)) 
         begin 
-            Red = 8'hff;
+            Red = 8'h00;
             Green = 8'h55;
             Blue = 8'h00;
-        end       
+        end
+	    if ((tankTwo == 1'b1))
+	begin 
+            Red = 8'h00;
+            Green = 8'h00;
+            Blue = 8'h55;
+	end
         else 
         begin 
             Red = 8'h00; 
             Green = 8'h00;
-            Blue = 8'h7f - DrawX[9:3];
+            Blue = 8'h00;
         end      
     end 
     
