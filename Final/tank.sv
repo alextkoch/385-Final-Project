@@ -17,7 +17,7 @@
 
 module  tank ( input Reset, frame_clk,
 					input [7:0] keycode,
-	      output [9:0]  Tank1X, Tank2X, Tank1Y, Tank2Y);
+	      output [9:0]  TankX, TankX);
     
 	logic [9:0] Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion;
 	 
