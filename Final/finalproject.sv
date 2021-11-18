@@ -1,12 +1,5 @@
-//-------------------------------------------------------------------------
-//                                                                       --
-//                                                                       --
-//      For use with ECE 385 Lab 62                                       --
-//      UIUC ECE Department                                              --
-//-------------------------------------------------------------------------
 
-
-module lab62 (
+module finalproject (
 
       ///////// Clocks /////////
       input     MAX10_CLK1_50, 
@@ -68,7 +61,7 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 	logic [3:0] hex_num_4, hex_num_3, hex_num_1, hex_num_0; //4 bit input hex digits
 	logic [1:0] signs;
 	logic [1:0] hundreds;
-	logic [9:0] drawxsig, drawysig, ballxsig, ballysig, ballsizesig;
+	logic [9:0] drawxsig, drawysig, tank1x, tank2x, tank1y, tank2y;
 	logic [7:0] Red, Blue, Green;
 	logic [7:0] keycode;
 
@@ -163,8 +156,9 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 	
 	vga_controller theVGA (.Clk(MAX10_CLK1_50), .Reset(Reset_h), .hs(VGA_HS), .vs(VGA_VS), .pixel_clk(VGA_Clk), .blank(blank), .sync(sync), .DrawX(drawxsig), .DrawY(drawysig));
 	
-	ball	theBall	(.Reset(Reset_h), .frame_clk(VGA_Clk), .keycode(keycode), .BallX(ballxsig), .BallY(ballysig), .BallS(ballsizesig));
+	tank	player1	(.Reset(Reset_h), .frame_clk(VGA_Clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y));
+	tank	player2	(.Reset(Reset_h), .frame_clk(VGA_Clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y));
 	
-	color_mapper theColorMapper (.BallX(ballxsig), .BallY(ballysig), .DrawX(drawxsig), .DrawY(drawysig), .Ball_size(ballsizesig), .Red(Red), .Green(Green), .Blue(Blue));
+	color_mapper theColorMapper (.TankOneX(tank1x), .TankOneY(tank1y), .TankTwoX(tank2x), .TankTwoY(tank2y), .DrawX(drawxsig), .DrawY(drawysig), .Red(Red), .Green(Green), .Blue(Blue));
 
 endmodule
