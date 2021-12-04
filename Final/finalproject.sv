@@ -177,8 +177,8 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 	
 	vga_controller theVGA (.Clk(MAX10_CLK1_50), .Reset(Reset_h), .hs(VGA_HS), .vs(VGA_VS), .pixel_clk(VGA_Clk), .blank(blank), .sync(sync), .DrawX(drawxsig), .DrawY(drawysig));
 	
-	tank	player1	(.Reset(Reset_h), .frame_clk(~VGA_Clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y));
-	tank	player2	(.Reset(Reset_h), .frame_clk(~VGA_Clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y));
+	tank	player1	(.player(1'b1), .Reset(Reset_h), .frame_clk(~VGA_Clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y));
+	tank	player2	(.player(1'b0), .Reset(Reset_h), .frame_clk(~VGA_Clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y));
 	
 	color_mapper theColorMapper (.blank(!blank), .map(map), .TankOneX(tank1x), .TankOneY(tank1y), .TankTwoX(tank2x), .TankTwoY(tank2y), .DrawX(drawxsig), .DrawY(drawysig), .Red(Red), .Green(Green), .Blue(Blue));
 
