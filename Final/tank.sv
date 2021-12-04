@@ -81,7 +81,10 @@ module  tank ( input Reset, frame_clk, player,
 					        Tank_Y_Motion <= -32;//W
 							  Tank_X_Motion <= 0;
 							 end	  
-					default: ;
+					default: begin
+							Tank_X_Motion <= 0;
+							Tank_Y_Motion <= 0;
+						 end;
 					   endcase
 				end
 			else
@@ -111,7 +114,10 @@ module  tank ( input Reset, frame_clk, player,
 					        Tank_Y_Motion <= -32;//Up
 							  Tank_X_Motion <= 0;
 							 end	  
-					default: ;
+					default: begin
+							Tank_X_Motion <= 0;
+							Tank_Y_Motion <= 0;
+						 end;
 					   endcase
 				end
 					Tank_Y_Pos <= (Tank_Y_Pos + Tank_Y_Motion);
