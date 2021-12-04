@@ -15,7 +15,8 @@
 //20x15 Boxes - This means a 300 size array (299:0) to store the coords of boxes/tank
 //640x480 Dispaly
 
-module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY, DrawX, DrawY, 
+module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY, DrawX, DrawY,
+		       input		  blank,
                        output logic [7:0]  Red, Green, Blue );
     
     logic tankOne, tankTwo;
@@ -46,13 +47,19 @@ module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY
        
     always_comb
     begin:RGB_Display
-	    if ((tankOne == 1'b1)) 
+	    if (blank)
+	begin
+	    Red = 8'h00; 
+            Green = 8'h00;
+            Blue = 8'h00
+	end
+	    else if ((tankOne == 1'b1)) 
         begin 
             Red = 8'h00;
             Green = 8'h55;
             Blue = 8'h00;
         end
-	    if ((tankTwo == 1'b1))
+	    else if ((tankTwo == 1'b1))
 	begin 
             Red = 8'h00;
             Green = 8'h00;
