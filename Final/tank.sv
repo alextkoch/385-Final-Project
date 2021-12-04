@@ -17,6 +17,7 @@
 
 module  tank ( input Reset, frame_clk, player,
 					input [7:0] keycode,
+	      input int map[300],
 	      output [9:0]  TankX, TankY);
     
 	logic [9:0] Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion;
@@ -59,32 +60,29 @@ module  tank ( input Reset, frame_clk, player,
 					 case (keycode)
 					8'h04 : begin
 
-								Tank_X_Motion <= -1;//A
+								Tank_X_Motion <= -32;//A
 								Tank_Y_Motion<= 0;
 							  end
 					        
 					8'h07 : begin
 								
-					        	  Tank_X_Motion <= 1;//D
+					        	  Tank_X_Motion <= 32;//D
 							  Tank_Y_Motion <= 0;
 							  end
 
 							  
 					8'h16 : begin
 
-					        Tank_Y_Motion <= 1;//S
+					        Tank_Y_Motion <= 32;//S
 							  Tank_X_Motion <= 0;
 							 end
 							  
 					8'h1A : begin
-					        Tank_Y_Motion <= -1;//W
+					        Tank_Y_Motion <= -32;//W
 							  Tank_X_Motion <= 0;
 							 end	  
 					default: ;
 					   endcase
-
-					Tank_Y_Pos <= (Tank_Y_Pos + Tank_Y_Motion);  //Update Position
-					Tank_X_Pos <= (Tank_X_Pos + Tank_X_Motion);
 				end
 			else
 				begin
@@ -92,39 +90,46 @@ module  tank ( input Reset, frame_clk, player,
 					 case (keycode)
 					8'h4F : begin
 
-								Tank_X_Motion <= -1;//Right
+								Tank_X_Motion <= -32;//Right
 								Tank_Y_Motion<= 0;
 							  end
 					        
 					8'h50 : begin
 								
-					        	  Tank_X_Motion <= 1;//Left
+					        	  Tank_X_Motion <= 32;//Left
 							  Tank_Y_Motion <= 0;
 							  end
 
 							  
 					8'h51 : begin
 
-					        Tank_Y_Motion <= 1;//Down
+					        Tank_Y_Motion <= 32;//Down
 							  Tank_X_Motion <= 0;
 							 end
 							  
 					8'h52 : begin
-					        Tank_Y_Motion <= -1;//Up
+					        Tank_Y_Motion <= -32;//Up
 							  Tank_X_Motion <= 0;
 							 end	  
 					default: ;
 					   endcase
-
-					Tank_Y_Pos <= (Tank_Y_Pos + Tank_Y_Motion);  //Update Position
-					Tank_X_Pos <= (Tank_X_Pos + Tank_X_Motion);
 				end
-
+					Tank_Y_Pos <= (Tank_Y_Pos + Tank_Y_Motion);
+					Tank_X_Pos <= (Tank_X_Pos + Tank_X_Motion);
+					int nextTile <= map[Tank_Y_Pos[9:5] * 20 + Tank_X_Pos[9:5]];
+					
+					if(nextTile == 0)
+						begin
+							TankX <= Tank_X_Pos;
+							TankY <= Tank_Y_Pos;
+						end
+					else
+						begin
+							TankX <= Tank_X_Pos - Tank_X_Motion;
+							TankY <= Tank_Y_Pos - Tank_Y_Motion;
+						end
 		end  
     end
-    end
-    assign TankX = Tank_X_Pos;
-   
-    assign TankY = Tank_Y_Pos;   
+    end 
 
 endmodule
