@@ -51,7 +51,7 @@ module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY
 	begin
 	    Red = 8'h00; 
             Green = 8'h00;
-            Blue = 8'h00
+            Blue = 8'h00;
 	end
 	    else if ((tankOne == 1'b1)) 
         begin 
