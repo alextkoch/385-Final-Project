@@ -16,7 +16,7 @@
 //640x480 Dispaly
 
 module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY, DrawX, DrawY,
-		      input	    [299:0] map,
+		      input	    int map[300],
 		       input		  blank,
                        output logic [7:0]  Red, Green, Blue );
     
