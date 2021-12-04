@@ -16,10 +16,14 @@
 //640x480 Dispaly
 
 module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY, DrawX, DrawY,
+		      input	    [299:0] map,
 		       input		  blank,
                        output logic [7:0]  Red, Green, Blue );
     
     logic tankOne, tankTwo;
+	
+    int ourTile;
+	assign ourTile = (DrawY[9:5] * 20 + DrawX[9:5]);
 	  
     int DistOneX, DistOneY;
     int DistTwoX, DistTwoY;
@@ -51,6 +55,30 @@ module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY
 	begin
 	    Red = 8'h00; 
             Green = 8'h00;
+            Blue = 8'h00;
+	end
+	    else if (map[ourTile] == 1)
+	begin
+	    Red = 8'h80;
+            Green = 8'h80;
+            Blue = 8'h80;
+	end
+	    else if (map[ourTile] == 2)
+	begin
+	    Red = 8'h96;
+            Green = 8'h4B;
+            Blue = 8'h00;
+	end
+	    else if (map[ourTile] == 3)
+	begin
+	    Red = 8'hFF;
+            Green = 8'hD7;
+            Blue = 8'h00;
+	end
+	    else if (map[ourTile] == 4)
+	begin
+	    Red = 8'hFF;
+            Green = 8'hD7;
             Blue = 8'h00;
 	end
 	    else if ((tankOne == 1'b1)) 
