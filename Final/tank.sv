@@ -122,7 +122,7 @@ module  tank ( input Reset, frame_clk, player,
 
 		end  
     end
-       
+    end
     assign TankX = Tank_X_Pos;
    
     assign TankY = Tank_Y_Pos;   
