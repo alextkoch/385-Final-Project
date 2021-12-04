@@ -23,7 +23,7 @@ module  tank ( input Reset, frame_clk, player,
 	 
 	//Psuedo Middle of the Bottom of the Screen (easy w)
 	parameter [9:0] Tank1_X_Int= 350;  // Leftmost position on the X axis upon reset (starting position essentially)
-	parameter [9:0] Tank1_Y_Int= 500;       // Topmost point on the Y axis upon reset
+	parameter [9:0] Tank1_Y_Int= 400;       // Topmost point on the Y axis upon reset
 	parameter [9:0] Tank2_X_Int= 350;  // Leftmost position on the X axis upon reset (starting position essentially)
 	parameter [9:0] Tank2_Y_Int= 80;       // Topmost point on the Y axis upon reset
 	
