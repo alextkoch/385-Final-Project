@@ -21,8 +21,8 @@ module  tank ( input Reset, frame_clk, player,
 	      output [9:0]  TankX, TankY);
     
 	logic [9:0] Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion;
-	 
 	int nextTile;
+	 
 	//Psuedo Middle of the Bottom of the Screen (easy w)
 	parameter [9:0] Tank1_X_Int= 32;  // Leftmost position on the X axis upon reset (starting position essentially)
 	parameter [9:0] Tank1_Y_Int= 416;       // Topmost point on the Y axis upon reset
@@ -94,13 +94,13 @@ module  tank ( input Reset, frame_clk, player,
 					 case (keycode)
 					8'h4F : begin
 
-								Tank_X_Motion <= -32;//Right
+								Tank_X_Motion <= 32;//Right
 								Tank_Y_Motion<= 0;
 							  end
 					        
 					8'h50 : begin
 								
-					        	  Tank_X_Motion <= 32;//Left
+					        	  Tank_X_Motion <= -32;//Left
 							  Tank_Y_Motion <= 0;
 							  end
 
@@ -121,9 +121,11 @@ module  tank ( input Reset, frame_clk, player,
 						 end
 					   endcase
 				end
-					Tank_Y_Pos <= (Tank_Y_Pos + Tank_Y_Motion);
+					
+		end 
+	Tank_Y_Pos <= (Tank_Y_Pos + Tank_Y_Motion);
 					Tank_X_Pos <= (Tank_X_Pos + Tank_X_Motion);
-					int nextTile <= map[Tank_Y_Pos[9:5] * 20 + Tank_X_Pos[9:5]];
+					nextTile <= map[Tank_Y_Pos[9:5] * 20 + Tank_X_Pos[9:5]];
 					
 					if(nextTile == 0)
 						begin
@@ -134,8 +136,7 @@ module  tank ( input Reset, frame_clk, player,
 						begin
 							TankX <= Tank_X_Pos - Tank_X_Motion;
 							TankY <= Tank_Y_Pos - Tank_Y_Motion;
-						end
-		end  
+						end	
     end
     end 
 
