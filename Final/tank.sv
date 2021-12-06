@@ -20,7 +20,7 @@ module  tank ( input Reset, frame_clk, player,
 	      input int map[300],
 	      output [9:0]  TankX, TankY);
     
-	logic [9:0] Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion;
+	logic [9:0] Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion, Tank_X_Pot, Tank_Y_Pot;
 	int nextTile;
 	 
 	//Psuedo Middle of the Bottom of the Screen (easy w)
@@ -122,20 +122,20 @@ module  tank ( input Reset, frame_clk, player,
 					   endcase
 				end
 					
-		end 
-	Tank_Y_Pos <= (Tank_Y_Pos + Tank_Y_Motion);
-					Tank_X_Pos <= (Tank_X_Pos + Tank_X_Motion);
-					nextTile <= map[Tank_Y_Pos[9:5] * 20 + Tank_X_Pos[9:5]];
+		end 			
+					Tank_X_Pot <= Tank_X_Pos + Tank_X_Motion;
+					Tank_Y_Pot <= Tank_Y_Pos + Tank_Y_Motion;
+					nextTile <= map[Tank_Y_Pot[9:5] * 20 + Tank_X_Pot[9:5]];
 					
 					if(nextTile == 0)
 						begin
-							TankX <= Tank_X_Pos;
-							TankY <= Tank_Y_Pos;
+							TankX <= Tank_X_Pot;
+							TankY <= Tank_Y_Pot;
 						end
 					else
 						begin
-							TankX <= Tank_X_Pos - Tank_X_Motion;
-							TankY <= Tank_Y_Pos - Tank_Y_Motion;
+							TankX <= Tank_X_Pos;
+							TankY <= Tank_Y_Pos;
 						end	
     end
     end 
