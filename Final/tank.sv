@@ -21,7 +21,8 @@ module  tank ( input Reset, frame_clk, player,
 	      output [9:0]  TankX, TankY);
     
 	logic [9:0] Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion, Tank_X_Pot, Tank_Y_Pot;
-	int nextTile;
+	logic [5:0] potX, potY;
+	int nextTile, valid;
 	 
 	//Psuedo Middle of the Bottom of the Screen (easy w)
 	parameter [9:0] Tank1_X_Int= 32;  // Leftmost position on the X axis upon reset (starting position essentially)
@@ -123,20 +124,25 @@ module  tank ( input Reset, frame_clk, player,
 				end
 					
 		end 			
-					Tank_X_Pot <= Tank_X_Pos + Tank_X_Motion;
-					Tank_Y_Pot <= Tank_Y_Pos + Tank_Y_Motion;
-					nextTile <= map[Tank_Y_Pot[9:5] * 20 + Tank_X_Pot[9:5]];
-					
-					if(nextTile == 0)
+			potX[5:0] = (Tank_X_Pos + Tank_X_Motion)[9:5];
+			potY[5:0] = (Tank_Y_Pos + Tank_Y_Motion)[9:5];
+				
+			nextTile = potY * 20 + potX;
+			
+			valid = map[nextTile];
+				
+					if(valid == 0)
 						begin
-							TankX <= Tank_X_Pot;
-							TankY <= Tank_Y_Pot;
+							Tank_X_Pos <= Tank_X_Pos + Tank_X_Motion;
+							Tank_Y_Pos <= Tank_Y_Pos + Tank_Y_Motion;
 						end
 					else
 						begin
-							TankX <= Tank_X_Pos;
-							TankY <= Tank_Y_Pos;
-						end	
+							Tank_X_Pos <= Tank_X_Pos;
+							Tank_Y_Pos <= Tank_Y_Pos;
+						end
+			Tank_X <= Tank_X_Pos;
+			Tank_Y <= Tank_Y_Pos;
     end
     end 
 
