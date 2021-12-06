@@ -16,12 +16,12 @@
 //640x480 Dispaly
 
 module  color_mapper ( input        [9:0] DrawX, DrawY,
-		      input	    int TankOneX, TankOneY, TankTwoX, TankTwoY,
+		      input	    int TankOneX, TankOneY, TankTwoX, TankTwoY, BulOneX, BulOneY, BulTwoX, BulTwoY,
 		      input	    int map[300],
 		       input		  blank,
                        output logic [7:0]  Red, Green, Blue );
     
-    logic tankOne, tankTwo;
+    logic tankOne, tankTwo, bulOne, bulTwo;
 	
     int ourTile;
 	assign ourTile = (DrawY[9:5] * 20 + DrawX[9:5]);
@@ -49,7 +49,26 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
         else 
             tankTwo = 1'b0;
      end 
-       
+    
+    always_comb
+    begin
+	    if ( (BulOneX == DrawX[9:5]) && (BulOneY == DrawY[9:5]) ) 
+            bulOne = 1'b1;
+        else 
+            bulOne = 1'b0;
+     end
+	
+    always_comb
+    begin
+	    if ( (BulTwoX == DrawX[9:5]) && (BulTwoY == DrawY[9:5]) ) 
+            bulTwo = 1'b1;
+        else 
+            bulTwo = 1'b0;
+     end
+	
+	
+	
+	
     always_comb
     begin:RGB_Display
 	    if (blank)
@@ -60,9 +79,9 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
 	end
 	    else if (map[ourTile] == 1)
 	begin
-	    Red = 8'h80;
-            Green = 8'h80;
-            Blue = 8'h80;
+	    Red = 8'h50;
+            Green = 8'h50;
+            Blue = 8'h50;
 	end
 	    else if (map[ourTile] == 2)
 	begin
@@ -94,6 +113,11 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
             Green = 8'h00;
             Blue = 8'h55;
 	end
+	    else if (bulOne == 1'b1 | bulTwo == 1'b1)
+	begin
+	    Red = 8'hff;
+            Green = 8'h00;
+            Blue = 8'h00;
         else 
         begin 
             Red = 8'h00; 
