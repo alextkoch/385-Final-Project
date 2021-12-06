@@ -15,7 +15,8 @@
 //20x15 Boxes - This means a 300 size array (299:0) to store the coords of boxes/tank
 //640x480 Dispaly
 
-module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY, DrawX, DrawY,
+module  color_mapper ( input        [9:0] DrawX, DrawY,
+		      input	    int TankOneX, TankOneY, TankTwoX, TankTwoY,
 		      input	    int map[300],
 		       input		  blank,
                        output logic [7:0]  Red, Green, Blue );
@@ -35,7 +36,7 @@ module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY
 	  
     always_comb
     begin
-	    if ( (TankOneX[9:5] == DrawX[9:5]) && (TankOneY[9:5] == DrawY[9:5]) ) 
+	    if ( (TankOneX == DrawX[9:5]) && (TankOneY == DrawY[9:5]) ) 
             tankOne = 1'b1;
         else 
             tankOne = 1'b0;
@@ -43,7 +44,7 @@ module  color_mapper ( input        [9:0] TankOneX, TankOneY, TankTwoX, TankTwoY
 	
     always_comb
     begin
-	    if ( (TankTwoX[9:5] == DrawX[9:5]) && (TankTwoY[9:5] == DrawY[9:5]) ) 
+	    if ( (TankTwoX == DrawX[9:5]) && (TankTwoY == DrawY[9:5]) ) 
             tankTwo = 1'b1;
         else 
             tankTwo = 1'b0;
