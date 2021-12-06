@@ -124,8 +124,8 @@ module  tank ( input Reset, frame_clk, player,
 				end
 					
 		end 			
-			potX[5:0] = (Tank_X_Pos + Tank_X_Motion)[9:5];
-			potY[5:0] = (Tank_Y_Pos + Tank_Y_Motion)[9:5];
+			potX[5:0] = Tank_X_Pos[9:5] + Tank_X_Motion[9:5];
+			potY[5:0] = Tank_Y_Pos[9:5] + Tank_Y_Motion[9:5];
 				
 			nextTile = potY * 20 + potX;
 			
@@ -141,8 +141,8 @@ module  tank ( input Reset, frame_clk, player,
 							Tank_X_Pos <= Tank_X_Pos;
 							Tank_Y_Pos <= Tank_Y_Pos;
 						end
-			Tank_X <= Tank_X_Pos;
-			Tank_Y <= Tank_Y_Pos;
+			TankX <= Tank_X_Pos;
+			TankY <= Tank_Y_Pos;
     end
     end 
 
