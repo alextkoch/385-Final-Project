@@ -2,7 +2,8 @@
 module  tank ( input Reset, frame_clk, player,
 					input [7:0] keycode,
 	      input int old_map[300],
-	      output int  TankX, TankY, BulX, BulY, change
+	      output int  TankX, TankY, BulX, BulY,
+	      output int new_map[300]
 			);
 
 	int Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion, Tank_X_Pot, Tank_Y_Pot;
@@ -14,6 +15,8 @@ module  tank ( input Reset, frame_clk, player,
 	int nextTile_bul, valid_bul;
 	
 	int dir;
+	
+	int newMap[300];
 	
 	logic is_bul, attempt;
 		
@@ -245,6 +248,13 @@ module  tank ( input Reset, frame_clk, player,
 				          end
 			endcase
     end
+	    
+	  newMap <= old_map;
+	    
+	    if(change)
+		    newMap[change] <= 0;
+	    
+	  new_map <= newMap;
     end
 
 
