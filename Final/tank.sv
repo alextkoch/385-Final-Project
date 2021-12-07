@@ -18,12 +18,20 @@
 module  tank ( input Reset, frame_clk, player,
 					input [7:0] keycode,
 	      input int map[300],
-	      output int  TankX, TankY);
+	      output int  TankX, TankY, BulX, BulY);
 
 	int Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion, Tank_X_Pot, Tank_Y_Pot;
-	int potX, potY;
-	int nextTile, valid;
-	 
+	int potX_tank, potY_tank;
+	int nextTile_tank, valid_tank;
+	
+	int Bul_X_Pos, Bul_X_Motion, Bul_Y_Pos, Bul_Y_Motion, Bul_X_Pot, Bul_Y_Pot;
+	int potX_bul, potY_bul;
+	int nextTile_bul, valid_bul;
+	
+	int dir;
+	
+	logic is_bul, attempt;
+	
 	parameter int Tank1_X_Int= 1;  // Leftmost position on the X axis upon reset (starting position essentially)
 	parameter int Tank1_Y_Int= 13;       // Topmost point on the Y axis upon reset
 	parameter int Tank2_X_Int= 18;  // Leftmost position on the X axis upon reset (starting position essentially)
@@ -33,6 +41,13 @@ module  tank ( input Reset, frame_clk, player,
     begin: Move_
         if (Reset)  // Asynchronous Reset
         begin 
+		is_bul <= 0;
+		dir <= 0;
+		Bul_Y_Motion <= 0;
+		Bul_X_Motion <= 0;
+		Bul_Y_Pos <= -1;
+		Bul_X_Pos <= -1;
+		
 		if (player) //low means we're dealing with player 1
 			begin
 				Tank_Y_Motion <= 0;
@@ -59,28 +74,46 @@ module  tank ( input Reset, frame_clk, player,
 
 								Tank_X_Motion <= -1;//A
 								Tank_Y_Motion<= 0;
+								dir <= 1;
+								attempt <= 0;
 							  end
 					        
 					8'h07 : begin
 								
 					        	  Tank_X_Motion <= 1;//D
 							  Tank_Y_Motion <= 0;
+							  dir <= 3;
+							  attempt <= 0;
 							  end
 
 							  
 					8'h16 : begin
 
-					        Tank_Y_Motion <= 1;//S
+					        	  Tank_Y_Motion <= 1;//S
 							  Tank_X_Motion <= 0;
+							  dir <= 2;
+							  attempt <= 0;
 							 end
 							  
 					8'h1A : begin
-					        Tank_Y_Motion <= -1;//W
+					           	  Tank_Y_Motion <= -1;//W
 							  Tank_X_Motion <= 0;
-							 end	  
+							  dir <= 0;
+						   	  attempt <= 0;
+							 end
+						 
+					8'h14 : begin
+					        	Tank_Y_Motion <= 0;// right shift
+							Tank_X_Motion <= 0;
+							dir <= dir;
+							attempt <= 1;
+							
+							end
 					default: begin
 							Tank_X_Motion <= 0;
 							Tank_Y_Motion <= 0;
+							dir <= dir;
+							attempt <= 0;
 						 end
 					   endcase
 				end
@@ -90,43 +123,60 @@ module  tank ( input Reset, frame_clk, player,
 					 case (keycode)
 					8'h4F : begin
 
-								Tank_X_Motion <= 1;//Right
-								Tank_Y_Motion<= 0;
-							  end
+							Tank_X_Motion <= 1;//Right
+							Tank_Y_Motion<= 0;
+							dir <= 3;
+							attempt <= 0;
+							end
 					        
 					8'h50 : begin
 								
-					        	  Tank_X_Motion <= -1;//Left
-							  Tank_Y_Motion <= 0;
-							  end
+					        	Tank_X_Motion <= -1;//Left
+							Tank_Y_Motion <= 0;
+							dir <= 1;
+							attempt <= 0;
+							end
 
 							  
 					8'h51 : begin
 
-					        Tank_Y_Motion <= 1;//Down
-							  Tank_X_Motion <= 0;
-							 end
+					        	Tank_Y_Motion <= 1;//Down
+							Tank_X_Motion <= 0;
+							dir <= 2;
+							attempt <= 0;
+							end
 							  
 					8'h52 : begin
-					        Tank_Y_Motion <= -1;//Up
-							  Tank_X_Motion <= 0;
-							 end	  
+					        	Tank_Y_Motion <= -1;//Up
+							Tank_X_Motion <= 0;
+							dir <= 0;
+							attempt <= 0;
+							end
+					8'he5 : begin
+					        	Tank_Y_Motion <= 0;// right shift
+							Tank_X_Motion <= 0;
+							dir <= dir;
+							attempt <= 1;
+							
+							end
 					default: begin
 							Tank_X_Motion <= 0;
 							Tank_Y_Motion <= 0;
+							dir <= dir;
+							attempt <= 0;
 						 end
 					   endcase
 				end
 					
 		end 			
-			potX = Tank_X_Pos + Tank_X_Motion;
-			potY = Tank_Y_Pos + Tank_Y_Motion;
+			potX_tank = Tank_X_Pos + Tank_X_Motion;
+			potY_tank = Tank_Y_Pos + Tank_Y_Motion;
 				
-			nextTile = potY * 20 + potX;
+			nextTile_tank = potY_tank * 20 + potX_tank;
 			
-			valid = map[nextTile];
+			valid_tank = map[nextTile_tank];
 				
-					if(valid == 0)
+					if(valid_tank == 0)
 						begin
 							Tank_X_Pos <= Tank_X_Pos + Tank_X_Motion;
 							Tank_Y_Pos <= Tank_Y_Pos + Tank_Y_Motion;
@@ -141,5 +191,50 @@ module  tank ( input Reset, frame_clk, player,
 
 	assign	TankX = Tank_X_Pos;
 	assign	TankY = Tank_Y_Pos;
+
+    always_comb begin
+	    if (is_bul) begin
+	    	Bul_X_Motion = Bul_X_Motion;
+		Bul_Y_Motion = Bul_Y_Motion;
+		Bul_X_Pos = Bul_X_Pos + Bul_X_Motion;
+		Bul_Y_Pos = Bul_Y_Pos + Bul_Y_Motion;
+		is_bul = 1;
+	    end
+	    else begin
+		    
+		    if (attempt) begin
+			    case (dir)
+				  0 :  begin Bul_X_Motion = 0;
+					     Bul_Y_Motion = -1;
+				       end
+				    1 :  begin Bul_X_Motion = -1;
+					     Bul_Y_Motion = 0;
+				       end
+				    2 :  begin Bul_X_Motion = 0;
+					     Bul_Y_Motion = 1;
+				       end
+				    default :  begin Bul_X_Motion = 1;
+					     Bul_Y_Motion = 0;
+				       end
+			    endcase
+			    Bul_X_Pos = Tank_X_Pos + Bul_X_Motion;
+			    Bul_Y_Pos = Tank_Y_Pos + Bul_Y_Motion;
+			    is_bul = 1;
+		    end
+		    else begin
+			Bul_X_Motion = Bul_X_Motion;
+			Bul_Y_Motion = Bul_Y_Motion;
+			Bul_X_Pos = Bul_X_Pos;
+			Bul_Y_Pos = Bul_Y_Pos;
+			is_bul = 0;
+		    end
+			    
+		    
+	    end
 	
+    end
+    
+    assign BulX = Bul_X_Pos;
+    assign BulY = Bul_Y_Pos;
+	    
 endmodule
