@@ -176,12 +176,15 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 //2 = Destructable Wall
 //3 = P1 Base
 //4 = P2 Base
+	logic slow_clk;
 	
 	vga_controller theVGA (.Clk(MAX10_CLK1_50), .Reset(Reset_h), .hs(VGA_HS), .vs(VGA_VS), .pixel_clk(VGA_Clk), .blank(blank), .sync(sync), .DrawX(drawxsig), .DrawY(drawysig));
 	
-	tank	player1	(.player(1'b1), .map(map), .Reset(Reset_h), .frame_clk(VGA_VS), .keycode(keycode), .TankX(tank1x), .TankY(tank1y), .BulX(bul1X), .BulY(bul1Y));
-	tank	player2	(.player(1'b0), .map(map), .Reset(Reset_h), .frame_clk(VGA_VS), .keycode(keycode), .TankX(tank2x), .TankY(tank2y), .BulX(bul2X), .BulY(bul2Y));
+	slower_clock slowerClk(.Reset(Reset_h), .Clk(VGA_VS), .slower_Clk(slow_clk));
 	
-	color_mapper theColorMapper (.blank(!blank), .map(map), .TankOneX(tank1x), .TankOneY(tank1y), .TankTwoX(tank2x), .TankTwoY(tank2y), .BulOneX(bul1X), .BulOneY(bul1Y), .BulTwoX(bul1X), .BulTwoY(bul1Y), .DrawX(drawxsig), .DrawY(drawysig), .Red(Red), .Green(Green), .Blue(Blue));
+	tank	player1	(.player(1'b1), .map(map), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y), .BulX(bul1x), .BulY(bul1y));
+	tank	player2	(.player(1'b0), .map(map), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y), .BulX(bul2x), .BulY(bul2y));
+	
+	color_mapper theColorMapper (.blank(!blank), .map(map), .TankOneX(tank1x), .TankOneY(tank1y), .TankTwoX(tank2x), .TankTwoY(tank2y), .BulOneX(bul1x), .BulOneY(bul1y), .BulTwoX(bul2x), .BulTwoY(bul2y), .DrawX(drawxsig), .DrawY(drawysig), .Red(Red), .Green(Green), .Blue(Blue));
 
 endmodule
