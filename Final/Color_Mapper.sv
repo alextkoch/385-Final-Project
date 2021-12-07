@@ -1,16 +1,3 @@
-//-------------------------------------------------------------------------
-//    Color_Mapper.sv                                                    --
-//    Stephen Kempf                                                      --
-//    3-1-06                                                             --
-//                                                                       --
-//    Modified by David Kesler  07-16-2008                               --
-//    Translated by Joe Meng    07-07-2013                               --
-//                                                                       --
-//    Fall 2014 Distribution                                             --
-//                                                                       --
-//    For use with ECE 385 Lab 7                                         --
-//    University of Illinois ECE Department                              --
-//-------------------------------------------------------------------------
 //32x32 Sprites
 //20x15 Boxes - This means a 300 size array (299:0) to store the coords of boxes/tank
 //640x480 Dispaly
@@ -77,6 +64,18 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
             Green = 8'h00;
             Blue = 8'h00;
 	end
+	else if (bulOne == 1'b1)
+	begin
+	    Red = 8'hff;
+            Green = 8'h00;
+            Blue = 8'h00;
+		end
+	else if (bulTwo == 1'b1)
+	begin
+	    Red = 8'hff;
+            Green = 8'h00;
+            Blue = 8'h00;
+		end
 	    else if (map[ourTile] == 1)
 	begin
 	    Red = 8'h50;
@@ -113,11 +112,7 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
             Green = 8'h00;
             Blue = 8'h55;
 	end
-	    else if (bulOne == 1'b1 | bulTwo == 1'b1)
-	begin
-	    Red = 8'hff;
-            Green = 8'h00;
-            Blue = 8'h00;
+	    
         else 
         begin 
             Red = 8'h00; 
