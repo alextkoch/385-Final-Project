@@ -1,19 +1,3 @@
-//-------------------------------------------------------------------------
-//    This is built off of the ball.sv from lab 6 (very loosely!)
-//
-//		Ball.sv                                                            --
-//    Viral Mehta                                                        --
-//    Spring 2005                                                        --
-//                                                                       --
-//    Modified by Stephen Kempf 03-01-2006                               --
-//                              03-12-2007                               --
-//    Translated by Joe Meng    07-07-2013                               --
-//    Fall 2014 Distribution                                             --
-//                                                                       --
-//    For use with ECE 298 Lab 7                                         --
-//    UIUC ECE Department                                                --
-//-------------------------------------------------------------------------
-
 
 module  tank ( input Reset, frame_clk, player,
 					input [7:0] keycode,
@@ -105,8 +89,8 @@ module  tank ( input Reset, frame_clk, player,
 						   	  attempt <= 0;
 							 end
 						 
-					8'h14 : begin
-					        	Tank_Y_Motion <= 0;// q
+					8'h14 : begin // q, shoot bullet
+					        	Tank_Y_Motion <= 0;
 							Tank_X_Motion <= 0;
 							dir <= dir;
 							attempt <= 1;
@@ -155,8 +139,8 @@ module  tank ( input Reset, frame_clk, player,
 							dir <= 0;
 							attempt <= 0;
 							end
-					8'h28 : begin
-					        	Tank_Y_Motion <= 0;// enter
+					8'h28 : begin // enter, shoot bullet
+					        	Tank_Y_Motion <= 0;
 							Tank_X_Motion <= 0;
 							dir <= dir;
 							attempt <= 1;
@@ -172,12 +156,12 @@ module  tank ( input Reset, frame_clk, player,
 				end
 					
 		end 			
-			potX_tank = Tank_X_Pos + Tank_X_Motion;
-			potY_tank = Tank_Y_Pos + Tank_Y_Motion;
+			potX_tank <= Tank_X_Pos + Tank_X_Motion;
+			potY_tank <= Tank_Y_Pos + Tank_Y_Motion;
 				
-			nextTile_tank = potY_tank * 20 + potX_tank;
+			nextTile_tank <= potY_tank * 20 + potX_tank;
 			
-			valid_tank = map[nextTile_tank];
+			valid_tank <= map[nextTile_tank];
 				
 					if(valid_tank == 0)
 						begin
@@ -230,15 +214,39 @@ module  tank ( input Reset, frame_clk, player,
 		    
 	    end
 	
+	// functionalities of bullet
+	potX_bul <= Bul_X_Pos + Bul_X_Motion;
+	potY_bul <= Bul_Y_Pos + Bul_Y_Motion;
+				
+	nextTile_bul <= potY_bul * 20 + potX_bul;
+	valid_bul <= map[nextTile_bul];
+	
+			case (valid_bul)
+				1 : begin // disappear if hits the wall
+					Bul_Y_Pos <= -1;
+					Bul_X_Pos <= -1;
+					is_bul <= 0;
+				    end
+				
+				2 : begin // destroy the brick
+					Bul_Y_Pos <= -1;
+					Bul_X_Pos <= -1;
+					is_bul <= 0;
+					map[nextTile_bul] <= 0;
+				    end
+				default : begin
+					Bul_X_Pos <= Bul_X_Pos;
+					Bul_Y_Pos <= Bul_Y_Pos;
+					is_bul <= 1;
+				          end
+			endcase
     end
     end
 
 
-	assign	TankX = Tank_X_Pos;
-	assign	TankY = Tank_Y_Pos;
-
-   
-    
+    assign TankX = Tank_X_Pos;
+    assign TankY = Tank_Y_Pos;
+	
     assign BulX = Bul_X_Pos;
     assign BulY = Bul_Y_Pos;
 	    
