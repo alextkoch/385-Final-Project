@@ -1,8 +1,9 @@
 
 module  tank ( input Reset, frame_clk, player,
 					input [7:0] keycode,
-	      input int map[300],
-	      output int  TankX, TankY, BulX, BulY);
+	      input int old_map[300],
+	      output int  TankX, TankY, BulX, BulY, change
+			);
 
 	int Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion, Tank_X_Pot, Tank_Y_Pot;
 	int potX_tank, potY_tank;
@@ -15,7 +16,7 @@ module  tank ( input Reset, frame_clk, player,
 	int dir;
 	
 	logic is_bul, attempt;
-	
+		
 	parameter int Tank1_X_Int= 1;  // Leftmost position on the X axis upon reset (starting position essentially)
 	parameter int Tank1_Y_Int= 13;       // Topmost point on the Y axis upon reset
 	parameter int Tank2_X_Int= 18;  // Leftmost position on the X axis upon reset (starting position essentially)
@@ -161,7 +162,7 @@ module  tank ( input Reset, frame_clk, player,
 				
 			nextTile_tank <= potY_tank * 20 + potX_tank;
 			
-			valid_tank <= map[nextTile_tank];
+			valid_tank <= old_map[nextTile_tank];
 				
 					if(valid_tank == 0)
 						begin
@@ -219,25 +220,28 @@ module  tank ( input Reset, frame_clk, player,
 	potY_bul <= Bul_Y_Pos + Bul_Y_Motion;
 				
 	nextTile_bul <= potY_bul * 20 + potX_bul;
-	valid_bul <= map[nextTile_bul];
+	valid_bul <= old_map[nextTile_bul];
+	
 	
 			case (valid_bul)
 				1 : begin // disappear if hits the wall
 					Bul_Y_Pos <= -1;
 					Bul_X_Pos <= -1;
 					is_bul <= 0;
+					change <= 0;
 				    end
 				
 				2 : begin // destroy the brick
 					Bul_Y_Pos <= -1;
 					Bul_X_Pos <= -1;
 					is_bul <= 0;
-					map[nextTile_bul] <= 0;
+					change <= nextTile_bul;
 				    end
 				default : begin
 					Bul_X_Pos <= Bul_X_Pos;
 					Bul_Y_Pos <= Bul_Y_Pos;
 					is_bul <= 1;
+					change <= 0;
 				          end
 			endcase
     end
@@ -249,5 +253,7 @@ module  tank ( input Reset, frame_clk, player,
 	
     assign BulX = Bul_X_Pos;
     assign BulY = Bul_Y_Pos;
+	 
+	 
 	    
 endmodule
