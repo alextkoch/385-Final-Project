@@ -14,7 +14,7 @@ module  tank ( input Reset, frame_clk, player,
 	int potX_bul, potY_bul;
 	int nextTile_bul, valid_bul;
 	
-	int dir;
+	int dir, change;
 	
 	int newMap[300];
 	
