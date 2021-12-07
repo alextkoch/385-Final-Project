@@ -45,8 +45,7 @@ module  tank ( input Reset, frame_clk, player,
 		dir <= 0;
 		Bul_Y_Motion <= 0;
 		Bul_X_Motion <= 0;
-		Bul_Y_Pos <= -1;
-		Bul_X_Pos <= -1;
+
 		
 		if (player) //low means we're dealing with player 1
 			begin
@@ -54,17 +53,21 @@ module  tank ( input Reset, frame_clk, player,
 				Tank_X_Motion <= 0;
 				Tank_Y_Pos <= Tank1_Y_Int;
 				Tank_X_Pos <= Tank1_X_Int;
+				Bul_Y_Pos <= -1;
+				Bul_X_Pos <= -1;
 			end
-		else
+			else
 			begin
 				Tank_Y_Motion <= 0;
 				Tank_X_Motion <= 0;
 				Tank_Y_Pos <= Tank2_Y_Int;
 				Tank_X_Pos <= Tank2_X_Int;
+				Bul_Y_Pos <= -1;
+				Bul_X_Pos <= -1;
 			end
-        end
+			end
            
-        else 
+       else 
         	begin 				  
 			
 			if(player) //distinction here is important, player 1 uses WASD, player 2 used the arrow keys
@@ -103,7 +106,7 @@ module  tank ( input Reset, frame_clk, player,
 							 end
 						 
 					8'h14 : begin
-					        	Tank_Y_Motion <= 0;// right shift
+					        	Tank_Y_Motion <= 0;// q
 							Tank_X_Motion <= 0;
 							dir <= dir;
 							attempt <= 1;
@@ -152,8 +155,8 @@ module  tank ( input Reset, frame_clk, player,
 							dir <= 0;
 							attempt <= 0;
 							end
-					8'he5 : begin
-					        	Tank_Y_Motion <= 0;// right shift
+					8'h28 : begin
+					        	Tank_Y_Motion <= 0;// enter
 							Tank_X_Motion <= 0;
 							dir <= dir;
 							attempt <= 1;
@@ -186,53 +189,55 @@ module  tank ( input Reset, frame_clk, player,
 							Tank_X_Pos <= Tank_X_Pos;
 							Tank_Y_Pos <= Tank_Y_Pos;
 						end
-    end
-    end 
+						
 
-	assign	TankX = Tank_X_Pos;
-	assign	TankY = Tank_Y_Pos;
-
-    always_comb begin
 	    if (is_bul) begin
-	    	Bul_X_Motion = Bul_X_Motion;
-		Bul_Y_Motion = Bul_Y_Motion;
-		Bul_X_Pos = Bul_X_Pos + Bul_X_Motion;
-		Bul_Y_Pos = Bul_Y_Pos + Bul_Y_Motion;
-		is_bul = 1;
+	    	Bul_X_Motion <= Bul_X_Motion;
+		Bul_Y_Motion <= Bul_Y_Motion;
+		Bul_X_Pos <= Bul_X_Pos + Bul_X_Motion;
+		Bul_Y_Pos <= Bul_Y_Pos + Bul_Y_Motion;
+		is_bul <= 1;
 	    end
 	    else begin
 		    
 		    if (attempt) begin
 			    case (dir)
-				  0 :  begin Bul_X_Motion = 0;
-					     Bul_Y_Motion = -1;
+				  0 :  begin Bul_X_Motion <= 0;
+					     Bul_Y_Motion <= -1;
 				       end
-				    1 :  begin Bul_X_Motion = -1;
-					     Bul_Y_Motion = 0;
+				    1 :  begin Bul_X_Motion <= -1;
+					     Bul_Y_Motion <= 0;
 				       end
-				    2 :  begin Bul_X_Motion = 0;
-					     Bul_Y_Motion = 1;
+				    2 :  begin Bul_X_Motion <= 0;
+					     Bul_Y_Motion <= 1;
 				       end
-				    default :  begin Bul_X_Motion = 1;
-					     Bul_Y_Motion = 0;
+				    default :  begin Bul_X_Motion <= 1;
+					     Bul_Y_Motion <= 0;
 				       end
 			    endcase
-			    Bul_X_Pos = Tank_X_Pos + Bul_X_Motion;
-			    Bul_Y_Pos = Tank_Y_Pos + Bul_Y_Motion;
-			    is_bul = 1;
+			    Bul_X_Pos <= Tank_X_Pos + Bul_X_Motion;
+			    Bul_Y_Pos <= Tank_Y_Pos + Bul_Y_Motion;
+			    is_bul <= 1;
 		    end
 		    else begin
-			Bul_X_Motion = Bul_X_Motion;
-			Bul_Y_Motion = Bul_Y_Motion;
-			Bul_X_Pos = Bul_X_Pos;
-			Bul_Y_Pos = Bul_Y_Pos;
-			is_bul = 0;
+			Bul_X_Motion <= Bul_X_Motion;
+			Bul_Y_Motion <= Bul_Y_Motion;
+			Bul_X_Pos <= Bul_X_Pos;
+			Bul_Y_Pos <= Bul_Y_Pos;
+			is_bul <= 0;
 		    end
 			    
 		    
 	    end
 	
     end
+    end
+
+
+	assign	TankX = Tank_X_Pos;
+	assign	TankY = Tank_Y_Pos;
+
+   
     
     assign BulX = Bul_X_Pos;
     assign BulY = Bul_Y_Pos;
