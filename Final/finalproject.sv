@@ -66,6 +66,7 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 	logic [7:0] keycode;
 	int tank1x, tank2x, tank1y, tank2y;
 	int bul1x, bul2x, bul1y, bul2y;
+	int change1, change2;
 
 //=======================================================
 //  Structural coding
@@ -164,12 +165,13 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 	
 	vga_controller theVGA (.Clk(MAX10_CLK1_50), .Reset(Reset_h), .hs(VGA_HS), .vs(VGA_VS), .pixel_clk(VGA_Clk), .blank(blank), .sync(sync), .DrawX(drawxsig), .DrawY(drawysig));
 	
-	cartographer theMap (.Reset(Reset_h), .Clk(MAX10_CLK1_50), .map(map));
 	
 	slower_clock slowerClk(.Reset(Reset_h), .Clk(VGA_VS), .slower_Clk(slow_clk));
 	
-	tank	player1	(.player(1'b1), .map(map), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y), .BulX(bul1x), .BulY(bul1y));
-	tank	player2	(.player(1'b0), .map(map), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y), .BulX(bul2x), .BulY(bul2y));
+	cartographer theMap (.Reset(Reset_h), .Clk(slow_clk), .map(map), .change1(change1), .change2(change2));
+	
+	tank	player1	(.player(1'b1), .map(map), .change(change1), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y), .BulX(bul1x), .BulY(bul1y));
+	tank	player2	(.player(1'b0), .map(map), .change(change2), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y), .BulX(bul2x), .BulY(bul2y));
 	
 	color_mapper theColorMapper (.blank(!blank), .map(map), .TankOneX(tank1x), .TankOneY(tank1y), .TankTwoX(tank2x), .TankTwoY(tank2y), .BulOneX(bul1x), .BulOneY(bul1y), .BulTwoX(bul2x), .BulTwoY(bul2y), .DrawX(drawxsig), .DrawY(drawysig), .Red(Red), .Green(Green), .Blue(Blue));
 
