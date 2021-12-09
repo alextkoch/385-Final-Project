@@ -67,6 +67,8 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 	int tank1x, tank2x, tank1y, tank2y;
 	int bul1x, bul2x, bul1y, bul2y;
 	int change1, change2;
+	logic win1, win2;
+	logic hitted1, hitted2;
 
 //=======================================================
 //  Structural coding
@@ -168,10 +170,10 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 	
 	slower_clock slowerClk(.Reset(Reset_h), .Clk(VGA_VS), .slower_Clk(slow_clk));
 	
-	cartographer theMap (.Reset(Reset_h), .Clk(slow_clk), .map(map), .change1(change1), .change2(change2));
+	cartographer theMap (.Reset(Reset_h), .Clk(slow_clk), .win1(win1), .win2(win2), .map(map), .change1(change1), .change2(change2));
 	
-	tank	player1	(.player(1'b1), .map(map), .change(change1), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y), .BulX(bul1x), .BulY(bul1y));
-	tank	player2	(.player(1'b0), .map(map), .change(change2), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y), .BulX(bul2x), .BulY(bul2y));
+	tank	player1	(.player(1'b1), .map(map), .loss(win2), .win(win1), .change(change1), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y), .BulX(bul1x), .BulY(bul1y), .enemyX(tank2x), .enemyY(tank2y), .gotHit(hitted2), .hitted(hitted1));
+	tank	player2	(.player(1'b0), .map(map), .loss(win1), .win(win2),.change(change2), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y), .BulX(bul2x), .BulY(bul2y), .enemyX(tank1x), .enemyY(tank1y), .gotHit(hitted1), .hitted(hitted2));
 	
 	color_mapper theColorMapper (.blank(!blank), .map(map), .TankOneX(tank1x), .TankOneY(tank1y), .TankTwoX(tank2x), .TankTwoY(tank2y), .BulOneX(bul1x), .BulOneY(bul1y), .BulTwoX(bul2x), .BulTwoY(bul2y), .DrawX(drawxsig), .DrawY(drawysig), .Red(Red), .Green(Green), .Blue(Blue));
 
