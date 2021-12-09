@@ -1,10 +1,9 @@
 
 module  tank ( input Reset, frame_clk, player,
 					input [7:0] keycode,
-	      input int old_map[300],
+	      input int map[300],
 	      output int  TankX, TankY, BulX, BulY,
-	      output int new_map[300]
-			);
+			output int change);
 
 	int Tank_X_Pos, Tank_X_Motion, Tank_Y_Pos, Tank_Y_Motion, Tank_X_Pot, Tank_Y_Pot;
 	int potX_tank, potY_tank;
@@ -14,12 +13,10 @@ module  tank ( input Reset, frame_clk, player,
 	int potX_bul, potY_bul;
 	int nextTile_bul, valid_bul;
 	
-	int dir, change;
-	
-	int newMap[300];
+	int dir;
 	
 	logic is_bul, attempt;
-		
+	
 	parameter int Tank1_X_Int= 1;  // Leftmost position on the X axis upon reset (starting position essentially)
 	parameter int Tank1_Y_Int= 13;       // Topmost point on the Y axis upon reset
 	parameter int Tank2_X_Int= 18;  // Leftmost position on the X axis upon reset (starting position essentially)
@@ -93,8 +90,8 @@ module  tank ( input Reset, frame_clk, player,
 						   	  attempt <= 0;
 							 end
 						 
-					8'h14 : begin // q, shoot bullet
-					        	Tank_Y_Motion <= 0;
+					8'h14 : begin
+					        	Tank_Y_Motion <= 0;// q
 							Tank_X_Motion <= 0;
 							dir <= dir;
 							attempt <= 1;
@@ -143,8 +140,8 @@ module  tank ( input Reset, frame_clk, player,
 							dir <= 0;
 							attempt <= 0;
 							end
-					8'h28 : begin // enter, shoot bullet
-					        	Tank_Y_Motion <= 0;
+					8'h28 : begin
+					        	Tank_Y_Motion <= 0;// enter
 							Tank_X_Motion <= 0;
 							dir <= dir;
 							attempt <= 1;
@@ -160,12 +157,12 @@ module  tank ( input Reset, frame_clk, player,
 				end
 					
 		end 			
-			potX_tank <= Tank_X_Pos + Tank_X_Motion;
-			potY_tank <= Tank_Y_Pos + Tank_Y_Motion;
+			potX_tank = Tank_X_Pos + Tank_X_Motion;
+			potY_tank = Tank_Y_Pos + Tank_Y_Motion;
 				
-			nextTile_tank <= potY_tank * 20 + potX_tank;
+			nextTile_tank = potY_tank * 20 + potX_tank;
 			
-			valid_tank <= old_map[nextTile_tank];
+			valid_tank = map[nextTile_tank];
 				
 					if(valid_tank == 0)
 						begin
@@ -180,14 +177,43 @@ module  tank ( input Reset, frame_clk, player,
 						
 
 	    if (is_bul) begin
-	    	Bul_X_Motion <= Bul_X_Motion;
-		Bul_Y_Motion <= Bul_Y_Motion;
-		Bul_X_Pos <= Bul_X_Pos + Bul_X_Motion;
-		Bul_Y_Pos <= Bul_Y_Pos + Bul_Y_Motion;
-		is_bul <= 1;
+//	    	Bul_X_Motion <= Bul_X_Motion;
+//		Bul_Y_Motion <= Bul_Y_Motion;
+//		Bul_X_Pos <= Bul_X_Pos + Bul_X_Motion;
+//		Bul_Y_Pos <= Bul_Y_Pos + Bul_Y_Motion;
+//		is_bul <= 1; working movement
+			
+		case (map[Bul_Y_Pos * 20 + Bul_X_Pos])
+			0 : begin
+					change <= 0;
+					Bul_X_Motion <= Bul_X_Motion;
+					Bul_Y_Motion <= Bul_Y_Motion;
+					Bul_X_Pos <= Bul_X_Pos + Bul_X_Motion;
+					Bul_Y_Pos <= Bul_Y_Pos + Bul_Y_Motion;
+					is_bul <= 1;
+				 end
+			1 : begin
+					change <= 0;
+					Bul_X_Pos <= -1;
+					Bul_Y_Pos <= -1;
+					is_bul <= 0;
+				 end
+			2 : begin
+					change <= Bul_Y_Pos * 20 + Bul_X_Pos;
+					Bul_X_Pos <= -1;
+					Bul_Y_Pos <= -1;
+					is_bul <= 0;
+				 end
+			default begin
+					change <= 0;
+					Bul_X_Pos <= -1;
+					Bul_Y_Pos <= -1;
+					is_bul <= 0;
+				 end
+			endcase
 	    end
 	    else begin
-		    
+		    change <= 0;
 		    if (attempt) begin
 			    case (dir)
 				  0 :  begin Bul_X_Motion <= 0;
@@ -203,9 +229,10 @@ module  tank ( input Reset, frame_clk, player,
 					     Bul_Y_Motion <= 0;
 				       end
 			    endcase
-			    Bul_X_Pos <= Tank_X_Pos + Bul_X_Motion;
-			    Bul_Y_Pos <= Tank_Y_Pos + Bul_Y_Motion;
+			    Bul_X_Pos <= Tank_X_Pos + Tank_X_Motion;
+			    Bul_Y_Pos <= Tank_Y_Pos + Tank_Y_Motion;
 			    is_bul <= 1;
+				 attempt <= 0;
 		    end
 		    else begin
 			Bul_X_Motion <= Bul_X_Motion;
@@ -218,52 +245,16 @@ module  tank ( input Reset, frame_clk, player,
 		    
 	    end
 	
-	// functionalities of bullet
-	potX_bul <= Bul_X_Pos + Bul_X_Motion;
-	potY_bul <= Bul_Y_Pos + Bul_Y_Motion;
-				
-	nextTile_bul <= potY_bul * 20 + potX_bul;
-	valid_bul <= old_map[nextTile_bul];
-	
-	
-			case (valid_bul)
-				1 : begin // disappear if hits the wall
-					Bul_Y_Pos <= -1;
-					Bul_X_Pos <= -1;
-					is_bul <= 0;
-					change <= 0;
-				    end
-				
-				2 : begin // destroy the brick
-					Bul_Y_Pos <= -1;
-					Bul_X_Pos <= -1;
-					is_bul <= 0;
-					change <= nextTile_bul;
-				    end
-				default : begin
-					Bul_X_Pos <= Bul_X_Pos;
-					Bul_Y_Pos <= Bul_Y_Pos;
-					is_bul <= 1;
-					change <= 0;
-				          end
-			endcase
     end
-	    
-	  newMap <= old_map;
-	    
-	    if(change)
-		    newMap[change] <= 0;
-	    
-	  new_map <= newMap;
     end
 
 
-    assign TankX = Tank_X_Pos;
-    assign TankY = Tank_Y_Pos;
-	
+	assign	TankX = Tank_X_Pos;
+	assign	TankY = Tank_Y_Pos;
+
+   
+    
     assign BulX = Bul_X_Pos;
     assign BulY = Bul_Y_Pos;
-	 
-	 
 	    
 endmodule
