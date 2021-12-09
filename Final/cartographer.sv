@@ -1,9 +1,10 @@
 module cartographer( input logic Reset, Clk,
+							input int change1, change2,
                     output int map[300] );
   
   int newMap[300];
   
-    always_ff @ (posedge Reset or posedge frame_clk )
+    always_ff @ (posedge Reset or posedge Clk )
       begin
         if(Reset)
           begin
@@ -27,8 +28,16 @@ module cartographer( input logic Reset, Clk,
           end
         else
           begin
-            newMap <= newMap;
-          end
+            
+				if (change1) begin
+					newMap[change1] = 0;
+				end
+				
+				if (change2) begin
+					newMap[change2] = 0;
+				end
+          
+			 end
       end
   
   assign map = newMap;
