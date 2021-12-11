@@ -6,6 +6,7 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
 		      input	    int TankOneX, TankOneY, TankTwoX, TankTwoY, BulOneX, BulOneY, BulTwoX, BulTwoY,
 		      input	    int map[300],
 		       input		  blank,
+				 input logic pixel1, pixel2, pixel_bul, pixel_brk,
                        output logic [7:0]  Red, Green, Blue );
     
     logic tankOne, tankTwo, bulOne, bulTwo;
@@ -64,17 +65,17 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
             Green = 8'h00;
             Blue = 8'h00;
 	end
-	else if (bulOne == 1'b1)
-	begin
-	    Red = 8'hff;
-            Green = 8'h00;
-            Blue = 8'h00;
+	else if (bulOne == 1'b1 && pixel_bul)
+	begin 
+					Red = 8'hff;
+					Green = 8'hff;
+					Blue = 8'hff;
 		end
-	else if (bulTwo == 1'b1)
-	begin
-	    Red = 8'hff;
-            Green = 8'h00;
-            Blue = 8'h00;
+	else if (bulTwo == 1'b1 && pixel_bul)
+		begin
+					Red = 8'hff;
+					Green = 8'hff;
+					Blue = 8'hff;
 		end
 	    else if (map[ourTile] == 1)
 	begin
@@ -84,9 +85,17 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
 	end
 	    else if (map[ourTile] == 2)
 	begin
-	    Red = 8'h96;
-            Green = 8'h4B;
-            Blue = 8'h00;
+	    if (pixel_brk)
+			begin 
+					Red = 8'h96;
+					Green = 8'h4b;
+					Blue = 8'h00;
+			end
+			else begin
+					Red = 8'h42; 
+					Green = 8'h10;
+					Blue = 8'h10;
+			end
 	end
 	    else if (map[ourTile] == 3)
 	begin
@@ -100,17 +109,32 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
             Green = 8'hD7;
             Blue = 8'h00;
 	end
-	    else if ((tankOne == 1'b1)) 
-        begin 
-            Red = 8'h00;
-            Green = 8'h55;
-            Blue = 8'h00;
-        end
+	    else if ((tankOne == 1'b1)) begin
+			if (pixel1)
+			begin 
+					Red = 8'h00;
+					Green = 8'h55;
+					Blue = 8'h00;
+			end
+			else begin
+					Red = 8'h00; 
+					Green = 8'h00;
+					Blue = 8'h00;
+			end
+		 end
 	    else if ((tankTwo == 1'b1))
 	begin 
-            Red = 8'h00;
-            Green = 8'h00;
-            Blue = 8'h55;
+           if (pixel2)
+			begin 
+					Red = 8'h00;
+					Green = 8'h00;
+					Blue = 8'h55;
+			end
+			else begin
+					Red = 8'h00; 
+					Green = 8'h00;
+					Blue = 8'h00;
+			end
 	end
 	    
         else 
