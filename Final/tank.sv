@@ -5,7 +5,7 @@ module  tank ( input Reset, frame_clk, player,
 			input logic loss, gotHit,
 			input int enemyX, enemyY,
 	      output int  TankX, TankY, BulX, BulY,
-			output int change,
+			output int change, dir,
 			output logic win, hitted
 			);
 
@@ -17,7 +17,6 @@ module  tank ( input Reset, frame_clk, player,
 	int potX_bul, potY_bul;
 	int nextTile_bul, valid_bul;
 	
-	int dir;
 	
 	logic won;
 	
@@ -242,7 +241,7 @@ module  tank ( input Reset, frame_clk, player,
 						Bul_Y_Pos <= -1;
 						is_bul <= 0;
 					end
-					else begin
+			else begin
 						hitted <= 1'b0;
 						case (map[Bul_Y_Pos * 20 + Bul_X_Pos])
 							0 : begin
@@ -307,8 +306,8 @@ module  tank ( input Reset, frame_clk, player,
 					     Bul_Y_Motion <= 0;
 				       end
 			    endcase
-			    Bul_X_Pos <= Tank_X_Pos + Tank_X_Motion;
-			    Bul_Y_Pos <= Tank_Y_Pos + Tank_Y_Motion;
+			    Bul_X_Pos <= Tank_X_Pos + 2*Tank_X_Motion;
+			    Bul_Y_Pos <= Tank_Y_Pos + 2*Tank_Y_Motion;
 			    is_bul <= 1;
 				 attempt <= 0;
 		    end
