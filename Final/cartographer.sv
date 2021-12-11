@@ -100,11 +100,17 @@ module cartographer( input logic Reset, Clk,
 				end
 				else begin
 				if (change1) begin
-					newMap[change1] = 0;
+					if (newMap[change1] == 2 || newMap[change1] == 6)
+						newMap[change1] = 0;
+					else
+						newMap[chage1] = 2;
 				end
 				
 				if (change2) begin
-					newMap[change2] = 0;
+					if (newMap[change2] == 2 || newMap[change2] == 6)
+						newMap[change2] = 0;
+					else
+						newMap[chage2] = 2;
 				end
           
 				end
