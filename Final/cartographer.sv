@@ -6,7 +6,7 @@ module cartographer( input logic Reset, Clk,
 						  output logic Reset2 );
   
   int newMap[300];
-  
+  // three maps version
     always_ff @ (posedge Reset or posedge Clk )
       begin
         if(Reset)
