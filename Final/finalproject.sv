@@ -69,10 +69,11 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 	int change1, change2;
 	logic win1, win2;
 	logic hitted1, hitted2;
-	logic pixel1, pixel2, pixel_bul, pixel_brk;
+	logic pixel1, pixel2, pixel_bul, pixel_brk, pixel_bush, pixel_rck;
 	logic [7:0] addr;
 	logic [31:0] data;
 	int dir1, dir2;
+	logic reset2;
 
 //=======================================================
 //  Structural coding
@@ -175,16 +176,18 @@ logic Reset_h, vssig, blank, sync, VGA_Clk;
 	
 	slower_clock slowerClk(.Reset(Reset_h), .Clk(VGA_VS), .slower_Clk(slow_clk));
 	
-	cartographer theMap (.Reset(Reset_h), .Clk(slow_clk), .win1(win1), .win2(win2), .map(map), .change1(change1), .change2(change2));
+	cartographer theMap (.Reset(Reset_h), .Clk(slow_clk), .Reset2(reset2), .keycode(keycode), .win1(win1), .win2(win2), .map(map), .change1(change1), .change2(change2));
 	
-	tank	player1	(.player(1'b1), .dir(dir1), .map(map), .loss(win2), .win(win1), .change(change1), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y), .BulX(bul1x), .BulY(bul1y), .enemyX(tank2x), .enemyY(tank2y), .gotHit(hitted2), .hitted(hitted1));
-	tank	player2	(.player(1'b0), .dir(dir2), .map(map), .loss(win1), .win(win2), .change(change2), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y), .BulX(bul2x), .BulY(bul2y), .enemyX(tank1x), .enemyY(tank1y), .gotHit(hitted1), .hitted(hitted2));
+	tank	player1	(.player(1'b1), .Reset2(reset2), .dir(dir1), .map(map), .loss(win2), .win(win1), .change(change1), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank1x), .TankY(tank1y), .BulX(bul1x), .BulY(bul1y), .enemyX(tank2x), .enemyY(tank2y), .gotHit(hitted2), .hitted(hitted1));
+	tank	player2	(.player(1'b0), .Reset2(reset2), .dir(dir2), .map(map), .loss(win1), .win(win2), .change(change2), .Reset(Reset_h), .frame_clk(slow_clk), .keycode(keycode), .TankX(tank2x), .TankY(tank2y), .BulX(bul2x), .BulY(bul2y), .enemyX(tank1x), .enemyY(tank1y), .gotHit(hitted1), .hitted(hitted2));
 	
-	pixel pixel_tank1(.bul(1'b0), .brk(1'b0), .dir(dir1), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel1));
-	pixel pixel_tank2(.bul(1'b0), .brk(1'b0), .dir(dir2), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel2));
-	pixel pixel_bullet(.bul(1'b1), .brk(1'b0), .dir(4), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel_bul));
-	pixel pixel_brick(.bul(1'b0), .brk(1'b1), .dir(5), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel_brk));
+	pixel pixel_tank1(.bush(1'b0), .rck(1'b0), .bul(1'b0), .brk(1'b0), .dir(dir1), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel1));
+	pixel pixel_tank2(.bush(1'b0), .rck(1'b0), .bul(1'b0), .brk(1'b0), .dir(dir2), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel2));
+	pixel pixel_bullet(.bush(1'b0), .rck(1'b0), .bul(1'b1), .brk(1'b0), .dir(4), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel_bul));
+	pixel pixel_brick(.bush(1'b0), .rck(1'b0), .bul(1'b0), .brk(1'b1), .dir(5), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel_brk));
+	pixel pixel_bsh(.bush(1'b1), .rck(1'b0), .bul(1'b0), .brk(1'b0), .dir(5), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel_bush));
+	pixel pixel_rock(.bush(1'b0), .rck(1'b1), .bul(1'b0), .brk(1'b0), .dir(5), .DrawX(drawxsig[4:0]), .DrawY(drawysig[4:0]), .pixel(pixel_rck));
 	
-	color_mapper theColorMapper (.pixel1(pixel1), .pixel2(pixel2), .pixel_bul(pixel_bul), .pixel_brk(pixel_brk), .blank(!blank), .map(map), .TankOneX(tank1x), .TankOneY(tank1y), .TankTwoX(tank2x), .TankTwoY(tank2y), .BulOneX(bul1x), .BulOneY(bul1y), .BulTwoX(bul2x), .BulTwoY(bul2y), .DrawX(drawxsig), .DrawY(drawysig), .Red(Red), .Green(Green), .Blue(Blue));
+	color_mapper theColorMapper (.pixel1(pixel1), .pixel2(pixel2), .pixel_bush(pixel_bush), .pixel_rck(pixel_rck), .pixel_bul(pixel_bul), .pixel_brk(pixel_brk), .blank(!blank), .map(map), .TankOneX(tank1x), .TankOneY(tank1y), .TankTwoX(tank2x), .TankTwoY(tank2y), .BulOneX(bul1x), .BulOneY(bul1y), .BulTwoX(bul2x), .BulTwoY(bul2y), .DrawX(drawxsig), .DrawY(drawysig), .Red(Red), .Green(Green), .Blue(Blue));
 
 endmodule
