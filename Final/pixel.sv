@@ -2,7 +2,7 @@ module pixel (
 							input logic [4:0] DrawX,
 							input logic [4:0] DrawY,
 							input int dir,
-							input logic bul, brk,
+							input logic bul, brk, bush, rck,
 							output logic pixel );
 
 	logic [7:0] addr;
@@ -14,6 +14,10 @@ module pixel (
 			addr = 8'd128 + DrawY;
 		else if (brk)
 			addr = 8'd160 + DrawY;
+		else if (bush)
+			addr = 8'd192 + DrawY;
+		else if (rck)
+			addr = 8'd224 + DrawY;	
 		else if (dir == 0)
 			addr = 5'b0 + DrawY;
 		else if (dir == 1)
