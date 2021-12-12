@@ -1,8 +1,8 @@
 
-module  tank ( input Reset, frame_clk, player,
+module  tank ( input Reset, frame_clk, player, 
 					input [7:0] keycode,
 	      input int map[300],
-			input logic loss, gotHit,
+			input logic loss, gotHit, Reset2,
 			input int enemyX, enemyY,
 	      output int  TankX, TankY, BulX, BulY,
 			output int change, dir,
@@ -30,9 +30,9 @@ module  tank ( input Reset, frame_clk, player,
 	parameter int Tank2_X_Int= 18;  // Leftmost position on the X axis upon reset (starting position essentially)
 	parameter int Tank2_Y_Int= 1;       // Topmost point on the Y axis upon reset
    
-    always_ff @ (posedge Reset or posedge frame_clk )
+    always_ff @ (posedge Reset or posedge Reset2 or posedge frame_clk )
     begin: Move_
-        if (Reset)  // Asynchronous Reset
+        if (Reset || Reset2)  // Asynchronous Reset
         begin 
 		is_bul <= 0;
 		dir <= 0;
@@ -214,7 +214,7 @@ module  tank ( input Reset, frame_clk, player,
 			
 			valid_tank = map[nextTile_tank];
 				
-					if(valid_tank == 0)
+					if(valid_tank == 0 || valid_tank == 6)
 						begin
 							Tank_X_Pos <= Tank_X_Pos + Tank_X_Motion;
 							Tank_Y_Pos <= Tank_Y_Pos + Tank_Y_Motion;
@@ -234,7 +234,7 @@ module  tank ( input Reset, frame_clk, player,
 //		Bul_X_Pos <= Bul_X_Pos + Bul_X_Motion;
 //		Bul_Y_Pos <= Bul_Y_Pos + Bul_Y_Motion;
 //		is_bul <= 1; working movement
-			if ((Bul_Y_Pos * 20 + Bul_X_Pos) == whereHeAt) begin
+		    	if (map[(Bul_Y_Pos * 20 + Bul_X_Pos)] == 0 && (Bul_Y_Pos * 20 + Bul_X_Pos) == whereHeAt) begin
 						hitted <= 1'b1;
 						change <= 0;
 						Bul_X_Pos <= -1;
@@ -277,7 +277,19 @@ module  tank ( input Reset, frame_clk, player,
 									is_bul <= 0;
 									if (player)
 										won <= 1'b1;
-								 end	 
+								 end
+							5 : begin
+									change <= Bul_Y_Pos * 20 + Bul_X_Pos;
+									Bul_X_Pos <= -1;
+									Bul_Y_Pos <= -1;
+									is_bul <= 0;
+								end
+							6 : begin
+									change <= Bul_Y_Pos * 20 + Bul_X_Pos;
+									Bul_X_Pos <= -1;
+									Bul_Y_Pos <= -1;
+									is_bul <= 0;
+								end
 							default begin
 									change <= 0;
 									Bul_X_Pos <= -1;
