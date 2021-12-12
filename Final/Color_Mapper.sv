@@ -6,7 +6,7 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
 		      input	    int TankOneX, TankOneY, TankTwoX, TankTwoY, BulOneX, BulOneY, BulTwoX, BulTwoY,
 		      input	    int map[300],
 		       input		  blank,
-				 input logic pixel1, pixel2, pixel_bul, pixel_brk,
+				 input logic pixel1, pixel2, pixel_bul, pixel_brk, pixel_bush, pixel_rck,
                        output logic [7:0]  Red, Green, Blue );
     
     logic tankOne, tankTwo, bulOne, bulTwo;
@@ -109,12 +109,38 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
             Green = 8'hD7;
             Blue = 8'h00;
 	end
+		else if (map[ourTile] == 6) // bush
+	begin
+		if (pixel_bush) begin
+	    Red = 8'h90;
+       Green = 8'hee;
+       Blue = 8'h90;
+		 end
+		 else begin
+		 Red = 8'h22;
+       Green = 8'h8c;
+       Blue = 8'h22;
+		 end
+	end
+		else if (map[ourTile] == 5) // rock
+	begin
+	    if (pixel_rck) begin
+	    Red = 8'hd3;
+       Green = 8'hd3;
+       Blue = 8'hd3;
+		 end
+		 else begin
+		 Red = 8'ha8;
+       Green = 8'ha8;
+       Blue = 8'ha8;
+		 end
+	end
 	    else if ((tankOne == 1'b1)) begin
 			if (pixel1)
 			begin 
-					Red = 8'h00;
-					Green = 8'h55;
-					Blue = 8'h00;
+					Red = 8'hff;
+					Green = 8'h31;
+					Blue = 8'h31;
 			end
 			else begin
 					Red = 8'h00; 
@@ -127,8 +153,8 @@ module  color_mapper ( input        [9:0] DrawX, DrawY,
            if (pixel2)
 			begin 
 					Red = 8'h00;
-					Green = 8'h00;
-					Blue = 8'h55;
+					Green = 8'hff;
+					Blue = 8'hff;
 			end
 			else begin
 					Red = 8'h00; 
